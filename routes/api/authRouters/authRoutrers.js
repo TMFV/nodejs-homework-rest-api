@@ -10,6 +10,8 @@ const {
   currenUserController,
   logoutController,
   avatarController,
+  verificationController,
+  verifMailRepeatController,
 } = require("../../../controllers/authControllers");
 
 routerAuth.post("/signup", asyncWrapper(registrationController));
@@ -22,5 +24,10 @@ routerAuth.patch(
   uploadMiddleware.single("avatar"),
   asyncWrapper(avatarController)
 );
+routerAuth.get(
+  "/verify/:verificationToken",
+  asyncWrapper(verificationController)
+);
+routerAuth.post("/verify/", asyncWrapper(verifMailRepeatController));
 
 module.exports = routerAuth;
