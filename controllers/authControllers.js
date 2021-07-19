@@ -6,6 +6,8 @@ const {
   logout,
   currentUser,
   avatarUser,
+  verification,
+  repeatVerifMail,
 } = require("../services/authServices");
 const { jimpHelper } = require("../helpers/apiHelpers");
 
@@ -14,6 +16,15 @@ const registrationController = async (req, res) => {
   await registration(email, password);
   res.status(201).json({ email, password, status: "success" });
 };
+const verificationController = async (req, res) => {
+  const { verificationToken } = req.params;
+  const user = await verification(verificationToken);
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+  }
+  res.status(200).json({ message: "Verification successful" });
+};
+
 const loginController = async (req, res) => {
   const { email, password } = req.body;
   const token = await login(email, password);
@@ -51,10 +62,25 @@ const avatarController = async (req, res) => {
     status: "success",
   });
 };
+
+const verifMailRepeatController = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400).json({ message: "missing required field email" });
+  }
+  const user = await repeatVerifMail(email);
+  if (user.verify === true) {
+    res.states(400).json({ message: "Verification has already been passed" });
+  }
+  res.json({ status: "success" });
+};
+
 module.exports = {
   registrationController,
   loginController,
   currenUserController,
   logoutController,
   avatarController,
+  verificationController,
+  verifMailRepeatController,
 };
