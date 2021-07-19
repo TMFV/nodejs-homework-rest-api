@@ -60,9 +60,19 @@ const logout = async (userId) => {
   await User.findOneAndUpdate({ _id: userId }, { token: null });
   return user;
 };
+const avatarUser = async (userId, newAvatarPath) => {
+  const user = await User.findOneAndUpdate(userId, {
+    avatarURL: newAvatarPath,
+  });
+  if (!user) {
+    throw new NotAuthorizedError(`Not authorized`);
+  }
+  return user;
+};
 module.exports = {
   registration,
   login,
   currentUser,
   logout,
+  avatarUser,
 };

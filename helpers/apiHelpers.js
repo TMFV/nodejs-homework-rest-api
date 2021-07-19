@@ -1,5 +1,9 @@
 // errors catcher midleware
+var Jimp = require("jimp");
+const path = require("path");
+
 const { ContactsApiError } = require("./errors");
+const NEW_IMAGE_PATH = path.resolve("./public/avatars");
 
 const asyncWrapper = (controller) => {
   return (req, res, next) => {
@@ -14,4 +18,15 @@ const errorHandler = (error, req, res, next) => {
   res.status(500).json({ message: error.message });
 };
 
-module.exports = { asyncWrapper, errorHandler };
+const jimpHelper = (imagePath, filename) => {
+  Jimp.read(imagePath, (err, imag) => {
+    if (err) throw err;
+    imag
+      .resize(250, 250) // resize
+      .quality(60) // set JPEG quality
+      .write(path.resolve(`./public/avatars/${filename}`)); // save
+  });
+  return path.resolve(`./public/avatars/${filename}`);
+};
+
+module.exports = { asyncWrapper, errorHandler, jimpHelper };

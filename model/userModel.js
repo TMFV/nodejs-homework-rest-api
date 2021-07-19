@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+var gravatar = require("gravatar");
 const bcrypt = require("bcrypt");
 
 mongoose.set("useCreateIndex", true); //---
@@ -17,6 +18,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["starter", "pro", "business"],
     default: "starter",
+  },
+  avatarURL: {
+    type: String,
+    default: function () {
+      return gravatar.url(
+        this.email,
+        {
+          protocol: "http",
+          s: "500",
+        },
+        true
+      );
+    },
   },
   token: {
     type: String,
